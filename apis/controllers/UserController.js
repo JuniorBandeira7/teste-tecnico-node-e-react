@@ -10,7 +10,7 @@ const getToken = require('../helpers/get-token')
 
 module.exports = class UserController{
     static async register(req, res){
-        const {name, email, password, confirmpassword} = req.body
+        const {name, email, password} = req.body
 
         // validações
         if(!name){
@@ -124,7 +124,7 @@ module.exports = class UserController{
         const token = getToken(req)
         const user = await getUserByToken(token)
 
-        const {name, email, password, confirmpassword} = req.body
+        const {name, email, password} = req.body
 
         if(!name){
             res.status(422).json({message: 'O nome é obrigatório'})
@@ -149,16 +149,11 @@ module.exports = class UserController{
 
         user.email = email
 
-        if(password != confirmpassword){
-            res.status(422).json({message: 'A senha e a confirmação de senha devem ser iguais'})
-            return
-        }else if(password === confirmpassword && password != null){
+        const salt = await bcrypt.genSalt(12)
+        const passwordHash = await bcrypt.hash(password, salt)
 
-            const salt = await bcrypt.genSalt(12)
-            const passwordHash = await bcrypt.hash(password, salt)
-
-            user.password = passwordHash
-        }
+        user.password = passwordHash
+        
         try {
             await User.findByIdAndUpdate({_id: user._id},
                 {$set: user},

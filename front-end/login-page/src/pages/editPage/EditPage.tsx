@@ -2,6 +2,7 @@ import { useCallback, useState, useEffect } from "react"
 import { useParams } from 'react-router-dom'
 import { IUser, UsersService } from '../../services/api/Users/UsersService'
 import { ErrorException } from '../../services/api/ErrorException'
+import { useNavigate } from 'react-router-dom'
 
 export const EditPage = () => {
     const { id } = useParams()
@@ -9,6 +10,7 @@ export const EditPage = () => {
     const [password, setPassword] = useState('')
     const [name, setName] = useState('');
     const [user, setUser] = useState<IUser | null>(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
       if (id) {
@@ -28,16 +30,17 @@ export const EditPage = () => {
       if (!email || !password || !name) {
         alert('Todos os campos são obrigatórios!');
         return;
-    }
+      }
 
-    UsersService.updateById(id, { name, email, password })
-        .then(result => {
-            if (result instanceof ErrorException) {
-                alert(result.message);
-            } else {
-                alert('Usuário criado com sucesso!');
-            }
-        })
+      UsersService.updateById(id, { name, email, password })
+          .then(result => {
+              if (result instanceof ErrorException) {
+                  alert(result.message);
+              } else {
+                  alert('Usuário alterado com sucesso!');
+                  navigate(`/${id}`)
+              }
+          })
     }, [email, password, name])
 
     return (

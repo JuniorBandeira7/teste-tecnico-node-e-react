@@ -14,11 +14,11 @@ const checktoken = (req, res, next) =>{
     }
 
     try {
-        const verified = jwt.verify(token, 'nossosecret')
+        const verified = jwt.verify(token, 'secret')
         req.user = verified
         next()
     } catch (error) {
-        return res.status(400).json({message: "=Token inválido"})
+        return res.status(400).json({message: "Token inválido"})
     }
 
 }

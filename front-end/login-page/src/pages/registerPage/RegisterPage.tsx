@@ -1,11 +1,13 @@
 import { useCallback, useState } from "react";
 import { IUser, UsersService } from '../../services/api/Users/UsersService';
 import { ErrorException } from '../../services/api/ErrorException';
+import { useNavigate } from 'react-router-dom'
 
 export const RegisterPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
+    const navigate = useNavigate()
 
     const handleEnviar = useCallback(() => {
         if (!email || !password || !name) {
@@ -19,6 +21,7 @@ export const RegisterPage = () => {
                     alert(result.message);
                 } else {
                     alert('Usuário criado com sucesso!');
+                    navigate(`/${result.userId}`)
                 }
             })
     }, [email, password, name]);

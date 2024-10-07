@@ -17,19 +17,31 @@ const getById = async (id: any): Promise<IUser | ErrorException> => {
     } 
 }
 
-const create = async (dataToCreate: Omit<IUser, 'id'>): Promise<IUser | ErrorException> => {
+const create = async (dataToCreate: Omit<IUser, 'id'>): Promise<any | ErrorException> => {
     try{
         const { data } = await Api().post('/register', dataToCreate)
-        return  data
+        if (data.token) {
+            localStorage.setItem('token', data.token)
+          } else {
+            throw new Error('Token não recebido')
+          }
+      
+        return data
     } catch(error: any){
         return new ErrorException(error.message || "Erro ao criar usuário")
     } 
 }
 
-const login = async (dataToCreate: Omit<IUser, 'id' | 'name'>): Promise<IUser | ErrorException> => {
+const login = async (dataToCreate: Omit<IUser, 'id' | 'name'>): Promise<any | ErrorException> => {
     try{
         const { data } = await Api().post('/login', dataToCreate)
-        return  data
+        if (data.token) {
+            localStorage.setItem('token', data.token)
+          } else {
+            throw new Error('Token não recebido')
+          }
+      
+        return data
     } catch(error: any){
         return new ErrorException(error.message || "Erro ao logar")
     } 
@@ -44,9 +56,23 @@ const updateById = async (id: any, dataToUpdate: Omit<IUser, 'id'>): Promise<IUs
     } 
 }
 
+const checkUser = async (): Promise<any | ErrorException> =>{
+    try{
+        const { data } = await Api().get('/checkuser')
+        if (data) {
+            return data
+          } else {
+            throw new Error('Acesso negado')
+          }
+    } catch(error: any){
+        return new ErrorException(error.message || "Acesso negado")
+    } 
+}
+
 export const UsersService = {
     getById,
     create,
     updateById,
+    checkUser,
     login
 }
