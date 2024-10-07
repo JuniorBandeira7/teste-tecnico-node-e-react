@@ -7,7 +7,7 @@ export const AppRoutes = () => {
             <Routes>
                 <Route path="/" element={<Login/>}/>
                 <Route path="/cadastro" element={<RegisterPage/>}/>
-                <Route path="/user/:id" element={<UserPage/>}/>
+                <Route path="/:id" element={<UserPage/>}/>
                 <Route path="/editar/:id" element={<EditPage/>}/>
                 <Route path="*"  element={<Navigate to={"/"}/>}/> 
             </Routes>

@@ -1,14 +1,14 @@
 import { Api } from "../ApiConfig"
 import { ErrorException } from "../ErrorException"
 
-interface IUser {
-    id: number
+export interface IUser {
+    id: any
     name: string
     email: string
     password: string
 }
 
-const getById = async (id: number): Promise<IUser | ErrorException> => {
+const getById = async (id: any): Promise<IUser | ErrorException> => {
     try{
         const { data } = await Api().get(`/${id}`)
         return  data
@@ -35,7 +35,7 @@ const login = async (dataToCreate: Omit<IUser, 'id' | 'name'>): Promise<IUser | 
     } 
 }
 
-const updateById = async (id: number, dataToUpdate: IUser): Promise<IUser | ErrorException> => {
+const updateById = async (id: any, dataToUpdate: Omit<IUser, 'id'>): Promise<IUser | ErrorException> => {
     try{
         const { data } = await Api().patch(`/edit/${id}`, dataToUpdate)
         return  data

@@ -25,15 +25,6 @@ module.exports = class UserController{
             res.status(422).json({message: 'a senha é obrigatória'})
             return
         }
-        if(!confirmpassword){
-            res.status(422).json({message: 'a confirmação de senha é obrigatória'})
-            return
-        }
-        if(password !== confirmpassword){
-            res.status(422).json({message: 'A senha e a confirmação de senha devem ser iguais'})
-            return
-        }
-
         // check if user exists
         const userExists = await User.findOne({email: email})
 
@@ -124,7 +115,7 @@ module.exports = class UserController{
             return
         }
 
-        res.status(200).json({user})
+        res.status(200).json(user)
     }
 
     static async editUser(req, res){
