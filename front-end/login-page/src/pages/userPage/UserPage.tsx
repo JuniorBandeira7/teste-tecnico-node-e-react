@@ -36,11 +36,11 @@ export const UserPage = () => {
 
   return (
     <div className="form-container">
-      <h1>Nome do usuário</h1>
+      <h1>{user?.name}</h1>
       <div className="user-information-container">
         {user ? (
           <>
-            <p>Name: {user.name}</p>
+            <p>Nome: {user.name}</p>
             <p>Email: {user.email}</p>
           </>
         ) : (
