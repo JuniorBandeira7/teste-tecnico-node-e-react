@@ -59,233 +59,115 @@ Este projeto é uma aplicação de autenticação de usuário que permite a func
 
 # Tutorial para Rodar o Projeto com Docker
 
-  
-
 ## Pré-requisitos
 
-  
-
 - [Docker](https://docs.docker.com/get-docker/) instalado na sua máquina.
-
 - Um terminal ou prompt de comando.
-
-  
 
 ## Passos para Executar o Projeto
 
-  
-
 ### 1. Clonar o Repositório
-
-  
 
 Primeiro, clone o repositório do GitHub para a sua máquina:
 
-  
-
 ```bash
-
-git  clone  https://github.com/seuusuario/seurepositorio.git
-
-cd  seurepositorio
-
+git clone https://github.com/seuusuario/seurepositorio.git
+cd seurepositorio
 ```
-
-  
 
 ### 2. Criar a Rede Docker
 
-  
-
 Crie uma rede Docker para que os contêineres possam se comunicar entre si:
 
-  
-
 ```bash
-
-docker  network  create  net-teste-tecnico
-
+docker network create net-teste-tecnico
 ```
-
-  
 
 ### 3. Executar o MongoDB
 
-  
-
 Execute o contêiner do MongoDB na rede criada:
 
-  
-
 ```bash
-
-docker  run  -d  --name  mongo  --network  net-teste-tecnico  mongo
-
+docker run -d --name mongo --network net-teste-tecnico -p 27017:27017 mongo
 ```
 
-  
+### 4. Construir e Executar o Back-end
 
-### 4. Construir a Imagem do Back-end
-
-  
-
-Navegue até o diretório apis e construa a imagem:
-
-  
+Navegue até o diretório `apis`, construa a imagem e execute o contêiner:
 
 ```bash
-
-docker  build  -t  api-teste-tecnico  .
-
+cd apis
+docker build -t api-teste-tecnico .
+docker run -d --name api-teste-tecnico --network net-teste-tecnico -p 5000:5000 api-teste-tecnico
 ```
 
-  
+### 5. Construir o Front-end
 
-### 5. Executar a Aplicação
-
-  
-
-Execute o contêiner da sua aplicação, conectando-o à rede e mapeando a porta desejada:
-
-  
+Navegue até o diretório `front-end/login-page` e construa a imagem:
 
 ```bash
-
-docker  run  -d  --name  api-teste-tecnico  --network  net-teste-tecnico  -p  5000:5000  api-teste-tecnico
-
-```
-
-
-### 6. Construir a Imagem do Front-end
-
-Navegue até o diretório front-end\login-page e construa a imagem:
-
-```bash
-
+cd ../front-end/login-page
 docker build -t spa-teste-tecnico .
-
 ```
 
-### 7. Executar a Aplicação
+### 6. Executar o Front-end
 
-  
-
-Execute o contêiner da sua aplicação, conectando-o à rede e mapeando a porta desejada e configurando o volume:
-
-  
+Execute o contêiner do frontend com o volume para os arquivos estáticos:
 
 ```bash
-
 docker run -d --name spa-teste-tecnico -v spa-volume:/var/www/html --network net-teste-tecnico spa-teste-tecnico
-
 ```
 
-### 8. Construir a Imagem do servidor Nginx
+### 7. Construir e Executar o Nginx
 
-Navegue até o diretório nginx e construa a imagem:
+Navegue até o diretório `nginx`, construa a imagem e execute o contêiner:
 
 ```bash
-
+cd ../../nginx
 docker build -t nginx-teste .
-
+docker run -d --name nginx-teste -v spa-volume:/var/www/html -p 80:80 --network net-teste-tecnico nginx-teste
 ```
 
-### 9. Executar a Aplicação
+### 8. Verificar se tudo está Funcionando
 
-  
-
-Execute o contêiner da sua aplicação, conectando-o à rede e mapeando a porta desejada e configurando o volume:
-
-  
+Para verificar se os contêineres estão rodando corretamente:
 
 ```bash
-
-docker run -d --name nginx-container -v spa-volume:/var/www/html -p 80:80 --network net-teste-tecnico nginx-teste
-
+docker ps
 ```
 
-### 10. Verificar se tudo está Funcionando
+Você deve ver todos os contêineres: `mongo`, `api-teste-tecnico`, `spa-teste-tecnico` e `nginx-teste`.
 
-  
+### 9. Acessar a Aplicação
 
-Para verificar se os contêineres estão rodando corretamente, use o seguinte comando:
-
-  
-
-```bash
-
-docker  ps
+Acesse a aplicação no navegador:
 
 ```
-
-  
-
-Você deve ver todos os contêiners criados anteriormente na lista.
-
-  
-
-### 11. Acessar a Aplicação
-
-  
-
-Agora, você pode acessar a sua aplicação no navegador usando:
-
-  
-
-```
-
 http://localhost
-
 ```
 
-  
+### 10. Verificar os Logs
 
-### 12. Parar os Contêineres
-
-  
-
-Para parar os contêineres quando não precisar mais, use:
-
-  
+Para verificar se o backend conectou ao MongoDB:
 
 ```bash
-
-docker  stop  api-teste-tecnico
-
-docker  stop  mongo
-
-docker  stop spa-teste-tecnico
-
-docker  stop nginx-teste
-
+docker logs api-teste-tecnico
 ```
 
-  
+Você deve ver as mensagens `conectado` e `Server running on http://127.0.0.1:5000`.
 
-### 13. Remover os Contêineres
-
-  
-
-Se você quiser remover os contêineres, use:
-
-  
+### 11. Parar os Contêineres
 
 ```bash
-
-docker  rm  api-teste-tecnico
-
-docker  rm  mongo
-
-docker  rm spa-teste-tecnico
-
-docker  rm nginx-teste
-
+docker stop api-teste-tecnico mongo spa-teste-tecnico nginx-teste
 ```
 
-  
+### 12. Remover os Contêineres
+
+```bash
+docker rm api-teste-tecnico mongo spa-teste-tecnico nginx-teste
+```
 
 ## Conclusão
-
-  
 
 Agora você tem sua aplicação e o MongoDB rodando em contêineres Docker. Se precisar de mais informações ou tiver problemas, consulte a [documentação do Docker](https://docs.docker.com/).
